@@ -1,11 +1,17 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'env-loader'
+description: 'The .env file loader action that can be used in the GitHub workflow'
+author: 'mixmoe'
+
 inputs:
-  milliseconds: # change this
+  file:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'path to .env file'
+  
+  mask:
+    required: false
+    description: 'mask environment variable value'
+    default: 'true'
+
 runs:
   using: 'node12'
   main: 'dist/index.js'
