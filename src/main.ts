@@ -1,18 +1,34 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import {loader} from './loader'
 
 async function run(): Promise<void> {
+  core.startGroup('env-loader logging')
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
+    const path: string = core.getInput('path', {required: true})
+    const mask: boolean =
+      core
+        .getInput('mask', {required: true, trimWhitespace: true})
+        .toLowerCase() === 'true'
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    core.info(`Will load environment variables from "${path}"`)
 
-    core.setOutput('time', new Date().toTimeString())
+    if (mask) {
+      core.info('Environment variables value mask is ENABLED')
+    } else {
+      core.warning(
+        'Environment variables value mask is DISABLED, your secret will not be protected.'
+      )
+    }
+
+    core.debug('Begin parse dotenv file at ' + new Date().toTimeString())
+    const output = loader(path)
+    core.debug('End dotenv file parse at ' + new Date().toTimeString())
+
+    core.info(`.env file loaded, total ${Object.values(output).length} environment variables exported.`)
   } catch (error) {
     core.setFailed(error.message)
+  } finally {
+    core.endGroup()
   }
 }
 
