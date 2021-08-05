@@ -4,9 +4,10 @@ author: 'mixmoe'
 
 inputs:
   file:
-    required: true
+    required: false
     description: 'path to .env file'
-  
+    default: '.env'
+
   mask:
     required: false
     description: 'mask environment variable value'
